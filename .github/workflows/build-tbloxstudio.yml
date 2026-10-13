@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -37,10 +37,60 @@ jobs:
       - name: Build standalone Windows executable
         run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name Modifystrap --paths . --paths src --collect-submodules src.modifystrap modifystrap/__main__.py
 
-      - name: Upload executable
+      - name: Package downloadable files
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/Modifystrap.exe, README.md, LICENSE -DestinationPath dist/Modifystrap-Windows-x64.zip -Force
+          $executableHash = (Get-FileHash dist/Modifystrap.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          $archiveHash = (Get-FileHash dist/Modifystrap-Windows-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          @(
+            "$executableHash  Modifystrap.exe"
+            "$archiveHash  Modifystrap-Windows-x64.zip"
+          ) | Set-Content dist/SHA256SUMS.txt
+
+      - name: Upload release files
         uses: actions/upload-artifact@v4
         with:
           name: Modifystrap-Windows-x64
-          path: dist/Modifystrap.exe
+          path: |
+            dist/Modifystrap.exe
+            dist/Modifystrap-Windows-x64.zip
+            dist/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
+
+  publish-release:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Download release files
+        uses: actions/download-artifact@v4
+        with:
+          name: Modifystrap-Windows-x64
+          path: release-assets
+
+      - name: Update rolling Latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: latest
+          RELEASE_TITLE: Modifystrap latest build
+          RELEASE_NOTES: |
+            Automatically updated from the latest successful build on `main`.
+
+            Commit: ${{ github.sha }}
+
+            Download `Modifystrap.exe` for the standalone Windows app, or `Modifystrap-Windows-x64.zip` for the app plus documentation. `SHA256SUMS.txt` contains checksums for both files.
+        run: |
+          git tag --force "$RELEASE_TAG" "$GITHUB_SHA"
+          git push --force origin "refs/tags/$RELEASE_TAG"
+
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release-assets/* --repo "$GITHUB_REPOSITORY" --clobber
+            gh release edit "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --title "$RELEASE_TITLE" --notes "$RELEASE_NOTES" --latest
+          else
+            gh release create "$RELEASE_TAG" release-assets/* --repo "$GITHUB_REPOSITORY" --title "$RELEASE_TITLE" --notes "$RELEASE_NOTES" --latest
+          fi

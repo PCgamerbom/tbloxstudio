@@ -37,8 +37,13 @@ the entry point prints the saved configuration summary instead.
 
 ## Building a Windows executable
 
-The GitHub Actions workflow builds a standalone `Modifystrap.exe` artifact on
-Windows. To build it locally:
+The GitHub Actions workflow builds a standalone `Modifystrap.exe` on Windows,
+packages it with the README and license as `Modifystrap-Windows-x64.zip`, and
+publishes both files plus `SHA256SUMS.txt` to the rolling **Latest** GitHub
+Release after every successful build on `main`. GitHub also provides source
+code archives on the release page.
+
+To build the executable locally:
 
 ```powershell
 python -m pip install ".[build]"
