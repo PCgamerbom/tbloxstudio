@@ -1,9 +1,11 @@
 # T-BloxStudio
 
-O launcher abre a versao mais recente do Roblox Studio encontrada em `%LOCALAPPDATA%\Roblox\Versions`. Se nao houver uma instalacao oficial nesse local, ele usa `RobloxStudioBeta.exe` ao lado desta pasta.
+O `T-BloxStudio.exe` abre a versao mais recente do Roblox Studio encontrada em `%LOCALAPPDATA%\Roblox\Versions`, instala o plugin automaticamente e encaminha os argumentos recebidos ao Studio. O plugin vai embutido no launcher. Se nao houver uma instalacao oficial, o launcher procura `RobloxStudioBeta.exe` ao lado dele.
 
-Antes de abrir o Studio, o launcher instala ou atualiza o plugin em `%LOCALAPPDATA%\Roblox\Plugins`. No Studio, abra o botao **T-BloxStudio** na barra de plugins e escolha uma das paletas. A escolha fica salva entre sessoes.
+Execute `T-BloxStudio.exe` no Windows. No Studio, abra o botao **T-BloxStudio** na barra de plugins e escolha uma das paletas. A escolha fica salva entre sessoes. O arquivo `.bat` continua disponivel como alternativa de desenvolvimento.
 
-As paletas personalizam somente o painel do plugin. A interface nativa, os icones internos e o motor do Roblox Studio nao sao alterados. O plugin e pequeno e nao muda as configuracoes de desempenho do Studio.
+Para compilar o executavel Windows x64 com o SDK .NET 10, rode `dotnet publish T-BloxStudio.Launcher/T-BloxStudio.Launcher.csproj -c Release -r win-x64 --self-contained true -o dist`. O resultado e `dist/T-BloxStudio.exe`.
+
+O T-BloxStudio e um launcher: ele abre a instalacao oficial sem substitui-la nem alterar seus binarios. As paletas personalizam somente o painel do plugin; a interface nativa e o motor do Roblox Studio nao sao alterados.
 
 Para remover o plugin, feche o Studio e apague `%LOCALAPPDATA%\Roblox\Plugins\TBloxStudio.lua`.
