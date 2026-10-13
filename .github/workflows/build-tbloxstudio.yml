@@ -1,0 +1,38 @@
+name: Build T-BloxStudio for Windows
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/build-tbloxstudio.yml"
+      - "T-BloxStudio.Launcher/**"
+      - "T-BloxStudio/TBloxStudio.plugin.lua"
+      - "T-BloxStudio/README.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish standalone Windows executable
+        run: dotnet publish T-BloxStudio.Launcher/T-BloxStudio.Launcher.csproj -c Release -r win-x64 --self-contained true -o publish
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: T-BloxStudio-Windows-x64
+          path: publish/T-BloxStudio.exe
+          if-no-files-found: error
+          retention-days: 30

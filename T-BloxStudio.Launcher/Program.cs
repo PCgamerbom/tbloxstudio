@@ -24,7 +24,21 @@ try
 }
 catch (Exception exception)
 {
-    NativeMethods.ShowError(exception.Message);
+    var logPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "T-BloxStudio",
+        "launcher.log");
+
+    try
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
+        File.WriteAllText(logPath, $"{DateTimeOffset.Now:O}{Environment.NewLine}{exception}");
+    }
+    catch
+    {
+    }
+
+    NativeMethods.ShowError($"{exception.Message}\n\nDetalhes: {logPath}");
     return 1;
 }
 
