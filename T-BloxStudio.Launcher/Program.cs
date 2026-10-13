@@ -44,21 +44,27 @@ catch (Exception exception)
 
 static string FindStudioPath()
 {
-    var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-    var versionsRoot = Path.Combine(localAppData, "Roblox", "Versions");
-
-    if (Directory.Exists(versionsRoot))
-    {
-        var installedStudio = Directory.EnumerateDirectories(versionsRoot, "version-*")
-            .Select(directory => Path.Combine(directory, "RobloxStudioBeta.exe"))
-            .Where(File.Exists)
-            .OrderByDescending(File.GetLastWriteTimeUtc)
-            .FirstOrDefault();
-
-        if (installedStudio is not null)
+    var versionsRoots = new[]
         {
-            return installedStudio;
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
         }
+        .Where(path => !string.IsNullOrWhiteSpace(path))
+        .Select(path => Path.Combine(path, "Roblox", "Versions"))
+        .Distinct(StringComparer.OrdinalIgnoreCase);
+
+    var installedStudio = versionsRoots
+        .Where(Directory.Exists)
+        .SelectMany(directory => Directory.EnumerateDirectories(directory, "version-*"))
+        .Select(directory => Path.Combine(directory, "RobloxStudioBeta.exe"))
+        .Where(File.Exists)
+        .OrderByDescending(File.GetLastWriteTimeUtc)
+        .FirstOrDefault();
+
+    if (installedStudio is not null)
+    {
+        return installedStudio;
     }
 
     var bundledStudio = Path.Combine(AppContext.BaseDirectory, "RobloxStudioBeta.exe");

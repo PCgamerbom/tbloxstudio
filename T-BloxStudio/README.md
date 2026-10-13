@@ -1,6 +1,6 @@
 # T-BloxStudio
 
-O `T-BloxStudio.exe` abre a versao mais recente do Roblox Studio encontrada em `%LOCALAPPDATA%\Roblox\Versions`, instala o plugin automaticamente e encaminha os argumentos recebidos ao Studio. O plugin vai embutido no launcher. Se nao houver uma instalacao oficial, o launcher procura `RobloxStudioBeta.exe` ao lado dele.
+O `T-BloxStudio.exe` abre a versao mais recente do Roblox Studio encontrada em `%LOCALAPPDATA%\Roblox\Versions`, `%ProgramFiles%\Roblox\Versions` ou `%ProgramFiles(x86)%\Roblox\Versions`, instala o plugin automaticamente e encaminha os argumentos recebidos ao Studio. O plugin vai embutido no launcher. Se nao houver uma instalacao oficial, o launcher procura `RobloxStudioBeta.exe` ao lado dele.
 
 Execute `T-BloxStudio.exe` no Windows. No Studio, abra o botao **T-BloxStudio** na barra de plugins e escolha uma das paletas. A escolha fica salva entre sessoes. O arquivo `.bat` continua disponivel como alternativa de desenvolvimento.
 
