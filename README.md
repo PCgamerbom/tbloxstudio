@@ -42,7 +42,7 @@ Windows. To build it locally:
 
 ```powershell
 python -m pip install ".[build]"
-python -m PyInstaller --noconfirm --clean --windowed --name Modifystrap --paths . --paths src --collect-submodules src.modifystrap modifystrap/__main__.py
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name Modifystrap --paths . --paths src --collect-submodules src.modifystrap modifystrap/__main__.py
 ```
 
 ## Installing in editable mode

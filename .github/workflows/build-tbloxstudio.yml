@@ -35,7 +35,7 @@ jobs:
         run: python -m pytest
 
       - name: Build standalone Windows executable
-        run: python -m PyInstaller --noconfirm --clean --windowed --name Modifystrap --paths . --paths src --collect-submodules src.modifystrap modifystrap/__main__.py
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name Modifystrap --paths . --paths src --collect-submodules src.modifystrap modifystrap/__main__.py
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
