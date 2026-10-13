@@ -16,6 +16,7 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0.0"]
+build = ["pyinstaller>=6.11,<7"]
 
 [project.scripts]
 modifystrap = "modifystrap.__main__:main"

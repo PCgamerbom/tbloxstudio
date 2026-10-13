@@ -1,4 +1,4 @@
-name: Build T-BloxStudio for Windows
+name: Build Modifystrap for Windows
 
 on:
   push:
@@ -6,9 +6,11 @@ on:
       - main
     paths:
       - ".github/workflows/build-tbloxstudio.yml"
-      - "T-BloxStudio.Launcher/**"
-      - "T-BloxStudio/TBloxStudio.plugin.lua"
-      - "T-BloxStudio/README.md"
+      - "modifystrap/**"
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "README.md"
   workflow_dispatch:
 
 permissions:
@@ -21,18 +23,24 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          dotnet-version: 10.0.x
+          python-version: "3.12"
 
-      - name: Publish standalone Windows executable
-        run: dotnet publish T-BloxStudio.Launcher/T-BloxStudio.Launcher.csproj -c Release -r win-x64 --self-contained true -o publish
+      - name: Install Modifystrap and build tools
+        run: python -m pip install --upgrade pip && python -m pip install ".[dev,build]"
+
+      - name: Run tests
+        run: python -m pytest
+
+      - name: Build standalone Windows executable
+        run: python -m PyInstaller --noconfirm --clean --windowed --name Modifystrap --paths . --paths src --collect-submodules src.modifystrap modifystrap/__main__.py
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
         with:
-          name: T-BloxStudio-Windows-x64
-          path: publish/T-BloxStudio.exe
+          name: Modifystrap-Windows-x64
+          path: dist/Modifystrap.exe
           if-no-files-found: error
           retention-days: 30

@@ -31,6 +31,20 @@ The application is organized into clear modules:
 python -m modifystrap
 ```
 
+On Windows, this opens the desktop interface. On other systems, Roblox Studio
+launching is not supported by the app; when no graphical display is available,
+the entry point prints the saved configuration summary instead.
+
+## Building a Windows executable
+
+The GitHub Actions workflow builds a standalone `Modifystrap.exe` artifact on
+Windows. To build it locally:
+
+```powershell
+python -m pip install ".[build]"
+python -m PyInstaller --noconfirm --clean --windowed --name Modifystrap --paths . --paths src --collect-submodules src.modifystrap modifystrap/__main__.py
+```
+
 ## Installing in editable mode
 
 ```bash
